@@ -3,13 +3,14 @@
  * создания новой транзакции
  * Наследуется от AsyncForm
  * */
-class CreateTransactionForm {
+class CreateTransactionForm extends AsyncForm{
   /**
    * Вызывает родительский конструктор и
    * метод renderAccountsList
    * */
   constructor( element ) {
-
+    super(element);
+    this.renderAccountsList();
   }
 
   /**
@@ -17,7 +18,26 @@ class CreateTransactionForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-
+    Account.list({} , (err,response) => {
+      if (err === null) {
+        if (response.success) {
+          const incomeAcctList = document.getElementById('income-accounts-list');
+          incomeAcctList.querySelectorAll('option').forEach((account) => {
+            account.remove();
+          });
+          const expenseAcctList = document.getElementById('expense-accounts-list');
+          expenseAcctList.querySelectorAll('option').forEach((account) => {
+            account.remove();
+          });
+          response.data.forEach((account) => {
+            expenseAcctList.insertAdjacentHTML('beforeend', `<option value="${account.id}">${account.name}</option>`)
+            incomeAcctList.insertAdjacentHTML('beforeend', `<option value="${account.id}">${account.name}</option>`)
+          });
+        } else {
+          alert(JSON.stringify(response.error));
+        }
+      }
+    });
   }
 
   /**
@@ -27,6 +47,17 @@ class CreateTransactionForm {
    * в котором находится форма
    * */
   onSubmit( options ) {
-
+    Transaction.create(options, (err,response) => {
+      if (err === null) {
+        if (response.success) {
+          App.getModal('newIncome').close();
+          App.getModal('newExpense').close();
+          this.element.reset();
+          App.update();
+        } else {
+          alert(JSON.stringify(response.error));
+        }
+      }
+    })
   }
 }

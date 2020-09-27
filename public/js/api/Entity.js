@@ -3,6 +3,7 @@
  * Имеет свойство URL, равно пустой строке.
  * */
 class Entity {
+  static URL = '';
 
   /**
    * Запрашивает с сервера список данных.
@@ -10,7 +11,15 @@ class Entity {
    * (в зависимости от того, что наследуется от Entity)
    * */
   static list( data, callback = f => f ) {
+    const options = {
+      url: `${this.URL}`,
+      method: 'GET',
+      data: data,
+      responseType: 'json',
+      callback: callback
+    };
 
+    return createRequest(options);
   }
 
   /**
@@ -19,7 +28,15 @@ class Entity {
    * что наследуется от Entity)
    * */
   static create( data, callback = f => f ) {
+    const options = {
+      url: `${this.URL}`,
+      method: 'POST',
+      data: Object.assign({ _method: 'PUT' }, data ),
+      responseType: 'json',
+      callback: callback
+    };
 
+    return createRequest(options);
   }
 
   /**
@@ -27,7 +44,15 @@ class Entity {
    * (в зависимости от того, что наследуется от Entity)
    * */
   static get( id = '', data, callback = f => f ) {
+    const options = {
+      url: `${this.URL}/${id}`,
+      method: 'GET',
+      data: data,
+      responseType: 'json',
+      callback: callback
+    };
 
+    return createRequest(options);
   }
 
   /**
@@ -35,7 +60,15 @@ class Entity {
    * (в зависимости от того, что наследуется от Entity)
    * */
   static remove( id = '', data, callback = f => f ) {
+    const options = {
+      url: `${this.URL}/`,
+      method: 'POST',
+      data: Object.assign({ _method: 'DELETE', id: id }, data ),
+      responseType: 'json',
+      callback: callback
+    };
 
+    return createRequest(options);
   }
 }
 

@@ -6,44 +6,60 @@
  * для последующей обработки
  * */
 class AsyncForm {
-  /**
-   * Если переданный элемент не существует,
-   * необходимо выкинуть ошибку.
-   * Сохраняет переданный элемент и регистрирует события
-   * через registerEvents()
-   * */
-  constructor( element ) {
+    /**
+     * Если переданный элемент не существует,
+     * необходимо выкинуть ошибку.
+     * Сохраняет переданный элемент и регистрирует события
+     * через registerEvents()
+     * */
+    constructor(element) {
+        if (element) {
+            this.element = element;
+            this.registerEvents();
+        } else {
+            throw Error('Empty element');
+        }
+    }
 
-  }
+    /**
+     * Необходимо запретить отправку формы. В момент отправки
+     * вызывает метод submit()
+     * */
+    registerEvents() {
+        this.element.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.submit();
+        });
+    }
 
-  /**
-   * Необходимо запретить отправку формы. В момент отправки
-   * вызывает метод submit()
-   * */
-  registerEvents() {
+    /**
+     * Преобразует данные формы в объект вида
+     * {
+     *  'название поля формы 1': 'значение поля формы 1',
+     *  'название поля формы 2': 'значение поля формы 2'
+     * }
+     * */
+    getData() {
+        const entries = (new FormData(this.element)).entries();
 
-  }
+        let formFields = {};
 
-  /**
-   * Преобразует данные формы в объект вида
-   * {
-   *  'название поля формы 1': 'значение поля формы 1',
-   *  'название поля формы 2': 'значение поля формы 2'
-   * }
-   * */
-  getData() {
+        for (let item of entries) {
+            formFields[item[0]] = item[1];
+        }
 
-  }
+        return formFields;
+    }
 
-  onSubmit( options ) {
+    onSubmit(options) {
 
-  }
+    }
 
-  /**
-   * Вызывает метод onSubmit и передаёт туда
-   * данные, полученные из метода getData()
-   * */
-  submit() {
-
-  }
+    /**
+     * Вызывает метод onSubmit и передаёт туда
+     * данные, полученные из метода getData()
+     * */
+    submit() {
+        this.onSubmit(this.getData());
+    }
 }
