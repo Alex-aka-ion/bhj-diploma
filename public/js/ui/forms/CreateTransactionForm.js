@@ -21,17 +21,10 @@ class CreateTransactionForm extends AsyncForm{
     Account.list({} , (err,response) => {
       if (err === null) {
         if (response.success) {
-          const incomeAcctList = document.getElementById('income-accounts-list');
-          incomeAcctList.querySelectorAll('option').forEach((account) => {
-            account.remove();
-          });
-          const expenseAcctList = document.getElementById('expense-accounts-list');
-          expenseAcctList.querySelectorAll('option').forEach((account) => {
-            account.remove();
-          });
+          const accountSelect = document.querySelector(`#${this.element.id} .accounts-select`);
+          accountSelect.innerHTML = '';
           response.data.forEach((account) => {
-            expenseAcctList.insertAdjacentHTML('beforeend', `<option value="${account.id}">${account.name}</option>`)
-            incomeAcctList.insertAdjacentHTML('beforeend', `<option value="${account.id}">${account.name}</option>`)
+            accountSelect.insertAdjacentHTML('beforeend', `<option value="${account.id}">${account.name}</option>`);
           });
         } else {
           alert(JSON.stringify(response.error));
@@ -50,8 +43,11 @@ class CreateTransactionForm extends AsyncForm{
     Transaction.create(options, (err,response) => {
       if (err === null) {
         if (response.success) {
-          App.getModal('newIncome').close();
-          App.getModal('newExpense').close();
+          if (this.element.id === 'new-income-form') {
+            App.getModal('newIncome').close();
+          } else {
+            App.getModal('newExpense').close();
+          }
           this.element.reset();
           App.update();
         } else {
